@@ -1,5 +1,7 @@
 import React from 'react';
 import AreaPlot from 'react-plotly.js';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { Button, Row, Container, Col } from 'react-bootstrap';
 
 class Stock extends React.Component
 {
@@ -16,7 +18,8 @@ class Stock extends React.Component
             price : '',
             company : '',
             country : '',
-            currency : ''
+            currency : '',
+
         }
     }
 
@@ -38,7 +41,7 @@ class Stock extends React.Component
 
         const api_key = '2877ZR7OGN5IP6E4';
         const token = 'c9ufpvaad3i9vd5jlsu0'
-        let company = 'AMZN';
+        let company = 'FB';
 
         // stock details
         let sd = `https://finnhub.io/api/v1/stock/profile2?symbol=${company}&token=${token}`
@@ -114,7 +117,7 @@ class Stock extends React.Component
                     chaPer = data.dp;
                     change = data.d;
                     price = data.pc;
-                    // console.log(price, chaPer, change)
+                    console.log(price, chaPer, change)
 
                     curPointer.setState({
                         changePercentage : chaPer,
@@ -128,32 +131,55 @@ class Stock extends React.Component
 
     }
 
+    changeLoad()
+    {
+        if(this.state.change[0] == '-')
+            return <h5 className='text-danger'>{this.state.change} ({this.state.changePercentage}%)</h5>
+            
+        return <h5 className='text-success'>{this.state.change} ({this.state.changePercentage}%)</h5>
+    }
+
     render(){ 
         return (
             <div>
-                <h2> Hello, react!</h2>
                 {/* <p> X Values : {this.state.stockChartXValues}</p>
                 <p> Y Values : {this.state.stockChartYValues}</p> */}
+                <Container>
+                    <Row>
+                        <Col >
+                            <h2>
+                                {this.state.price}
+                                <span>
+                                    <sup className='text-muted' style={{fontSize:"15px"}}>{this.state.currency}</sup>
+                                </span>
+                            </h2>
+                        </Col>
+                    </Row>
 
-                <p> Price : {this.state.price} </p>
-                <p> Change : {this.state.change} </p>
-                <p> Change Percentage : {this.state.changePercentage} </p>
-
-                <p> Company : {this.state.company} </p>
-                <p> Counry : {this.state.country} </p>
-                <p> Currency : {this.state.currency} </p>
-                <AreaPlot
-                    data={[
-                    {
-                        x: this.state.stockChartXValues,
-                        y: this.state.stockChartYValues,
-                        type: 'sccatter',
-                        mode: 'lines+markers',
-                        marker: {color: 'red'},
-                    },
-                    ]}
-                    layout={ {width: 1070, height: 720, title: 'An Amazon Plot'} }
-                />
+                    <Row>
+                        <Col>
+                            {this.changeLoad()}
+                        </Col>
+                    </Row>
+                    
+                    <Row>
+                        <Col style = {{textAlign : 'center'}}>
+                             <AreaPlot
+                                data={[
+                                {
+                                    x: this.state.stockChartXValues,
+                                    y: this.state.stockChartYValues,
+                                    type: 'sccatter',
+                                    mode: 'lines+markers',
+                                    marker: {color: 'red'},
+                                },
+                                ]}
+                                layout={ {width: 1070, height: 720, title: `${this.state.company}'s Stock Plot`} }
+                            />   
+                        </Col>
+                    </Row>
+                    
+                </Container>
             </div>
         )
     }
