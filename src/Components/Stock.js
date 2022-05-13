@@ -2,6 +2,7 @@ import React from 'react';
 import AreaPlot from 'react-plotly.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button, Row, Container, Col } from 'react-bootstrap';
+import Navbar from './Navbar';
 
 class Stock extends React.Component
 {
@@ -161,7 +162,6 @@ class Stock extends React.Component
                             {this.changeLoad()}
                         </Col>
                     </Row>
-                    
                     <Row>
                         <Col style = {{textAlign : 'center'}}>
                              <AreaPlot
