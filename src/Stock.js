@@ -1,8 +1,5 @@
 import React from 'react';
 import AreaPlot from 'react-plotly.js';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { curveCardinal } from 'd3-shape';
-
 
 class Stock extends React.Component
 {
@@ -16,7 +13,10 @@ class Stock extends React.Component
             stockChartYValues : [],
             changePercentage : '',
             change : '',
-            price : ''
+            price : '',
+            company : '',
+            country : '',
+            currency : ''
         }
     }
 
@@ -32,19 +32,16 @@ class Stock extends React.Component
         let xvals = [];
         let yvals = [];
 
-        let change = '';
-        let price = '';
-        let chaPer = '';
+        let change = '', price = '', chaPer = '';
+
+        let con = '', cur = '', com = '';
 
         const api_key = '2877ZR7OGN5IP6E4';
+        const token = 'c9ufpvaad3i9vd5jlsu0'
         let company = 'AMZN';
 
-        let sd = `https://finnhub.io/api/v1/stock/profile2?symbol=${company}&token=c9ufpvaad3i9vd5jlsu0`
-
-        let call = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${company}&apikey=${api_key}`;
-
-        const url = `https://finnhub.io/api/v1/quote?symbol=${company}&token=c9ufpvaad3i9vd5jlsu0`;
-        const response = await fetch(url);
+        // stock details
+        let sd = `https://finnhub.io/api/v1/stock/profile2?symbol=${company}&token=${token}`
 
         const res1 = await fetch(sd);
         if(res1.ok)
@@ -54,10 +51,22 @@ class Stock extends React.Component
             tw.then(
                 function(data)
                 {
-                    console.log(data)
+                    // console.log(data)
+                    con = data.country;
+                    cur = data.currency;
+                    com = data.name;
+
+                    curPointer.setState({
+                        company : com,
+                        country : con,
+                        currency : cur
+                    })
                 }
             )
         }
+
+        // stock history i.e. daily values
+        let call = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${company}&apikey=${api_key}`;
 
         fetch(call)
         .then(
@@ -90,6 +99,10 @@ class Stock extends React.Component
             }
         )
 
+        // stock quotation
+        const url = `https://finnhub.io/api/v1/quote?symbol=${company}&token=${token}`;
+        const response = await fetch(url);
+
         if(response.ok)
         {
             let temp = response.json();
@@ -115,8 +128,7 @@ class Stock extends React.Component
 
     }
 
-    render(){
-        const cardinal = curveCardinal.tension(0.2);
+    render(){ 
         return (
             <div>
                 <h2> Hello, react!</h2>
@@ -126,6 +138,10 @@ class Stock extends React.Component
                 <p> Price : {this.state.price} </p>
                 <p> Change : {this.state.change} </p>
                 <p> Change Percentage : {this.state.changePercentage} </p>
+
+                <p> Company : {this.state.company} </p>
+                <p> Counry : {this.state.country} </p>
+                <p> Currency : {this.state.currency} </p>
                 <AreaPlot
                     data={[
                     {
